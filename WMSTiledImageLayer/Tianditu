@@ -1,0 +1,80 @@
+import gov.nasa.worldwind.avlist.AVKey;  
+import gov.nasa.worldwind.avlist.AVList;  
+import gov.nasa.worldwind.avlist.AVListImpl;  
+import gov.nasa.worldwind.ogc.wms.WMSCapabilities;
+import gov.nasa.worldwind.ogc.wms.WMSLayerCapabilities;
+import gov.nasa.worldwind.wms.WMSTiledImageLayer;  
+import gov.nasa.worldwindx.examples.ApplicationTemplate;  
+   
+import java.net.URI;  
+import java.net.URISyntaxException;
+import java.util.List;  
+   
+public class AddTianDiTu extends ApplicationTemplate {  
+    public static class AppFrame extends ApplicationTemplate.AppFrame{  
+   
+        private static final long serialVersionUID = 1L;  
+   
+        public AppFrame(){  
+            try {   
+                WMSTiledImageLayer imageLayer = addTianDiTuImage();
+                //图层名称  
+                imageLayer.setName("tianditu");  
+                imageLayer.setEnabled(true);  
+                //图层的透明度  
+                imageLayer.setOpacity(1);  
+                //图层的最大显示高度  
+                imageLayer.setMaxActiveAltitude(33500000);  
+                getWwd().getModel().getLayers().add(imageLayer);  
+   
+            } catch (URISyntaxException e) {  
+                e.printStackTrace();  
+            } catch (Exception e) {  
+                e.printStackTrace();  
+            }  
+        }  
+   
+    }  
+    
+    public static WMSTiledImageLayer addTianDiTuImage() throws Exception  
+    {  
+        // 请求地图的URL  
+        String uri = "http://gisserver.tianditu.com/TDTService/region/wms";  
+        // WMS  
+        WMSCapabilities caps;  
+        URI serverURI;  
+        serverURI = new URI(uri);  
+        // 获得WMSCapabilities对象  
+        caps = WMSCapabilities.retrieve(serverURI);  
+        // 解析WMSCapabilities数据  
+        caps.parse();  
+      
+        // // 输出wms元数据信息  
+        // System.out.println(caps.getCapabilityInformation().toString());  
+        // 获取所有图层(这里只有一个，自己用geoserver发布的则可能有很多)  
+        final List<WMSLayerCapabilities> namedLayerCaps = caps.getNamedLayers();  
+        String layerName = null;  
+        for (WMSLayerCapabilities wmsLayerCapabilities : namedLayerCaps)  
+        {  
+            layerName = wmsLayerCapabilities.getName();  
+        }  
+        AVList params = new AVListImpl();  
+        // 图层的名称  
+        params.setValue(AVKey.LAYER_NAMES, layerName);  
+        // 地图服务的协议，这里是OGC:WMS  
+        params.setValue(AVKey.SERVICE_NAME, "OGC:WMS");  
+        // 获得地图的uri，也就是上面定义的uri  
+        params.setValue(AVKey.GET_MAP_URL, uri);  
+        // 在本地缓存文件的名称  
+        params.setValue(AVKey.DATA_CACHE_NAME, layerName);  
+        params.setValue(AVKey.TILE_URL_BUILDER,  
+                new WMSTiledImageLayer.URLBuilder(params));  
+      
+        WMSTiledImageLayer layer = new WMSTiledImageLayer(caps, params);  
+        return layer;  
+    }  
+    
+public static void main(String[] args) {  
+        ApplicationTemplate.start("WMS图层",AppFrame.class);  
+    }  
+}  
