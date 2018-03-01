@@ -1,0 +1,14 @@
+服务基本信息
+*	服务URL	http://gisserver.tianditu.com/TDTService/region/wms
+*	服务名称	行政区划
+*	服务简介	行政区划是指县级以上行政区划名称、区划边界等信息
+*	关键字	行政区划，WMS
+*	服务类型	OGC WMS
+*	主题分类	基础地理框架数据
+覆盖区域	国家
+坐标系	CGCS2000
+投影类型	经纬度
+*	使用权限	公开
+服务预览	http://zhfw.tianditu.com/
+更新周期	大于一年
+
