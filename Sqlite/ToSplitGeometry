@@ -1,0 +1,87 @@
+import java.util.ArrayList;
+import java.util.List;
+
+import glredbook10.doublebuf;
+
+public class ToSplitGeometry {
+
+	public ToSplitGeometry(String geometryString){
+		
+	}
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+        String geometryString = "LINESTRING((-180 -90, -109.999 -109.999, -109.999 109.999, 109.999 109.999, 180 90))";
+        /*List<Double> geometryX = new ArrayList<>(); 
+        List<Double> geometryY = new ArrayList<>();
+        String geometryType =  getGeometry(geometryString,geometryX,geometryY);
+        for(int i=0;i<geometryX.size();i++){
+    	   System.out.println(geometryType+"("+geometryX.get(i)+" "+geometryY.get(i)+")");
+        }
+		*/
+       String[][][] geometry = getGeometry(geometryString);
+       for(int i=0;i<geometry.length;i++){
+    	   System.out.println();
+    	   for(int j=0;j<geometry[i].length;j++){
+    		   System.out.print("( ");
+    		   for(int k=0;k<geometry[i][j].length;k++){
+    			   System.out.print(geometry[i][j][k]+" ");
+    		   }
+    		   System.out.print(")");
+    	   }
+       }  
+	}
+	
+	static String getGeometryType(String geometryString){
+		String geometryType = geometryString.split("\\(")[0].trim();
+		return geometryType;
+	}
+	
+    static String getGeometry(String geometryString,List<Double> geometryX,List<Double> geometryY){
+         String[] first =geometryString.split("\\(");
+         String geometryType =first[0].trim();
+         String[] second = first[1].trim().split("\\)");
+         String[] third = second[0].trim().split(",");
+         for(int i=0;i<third.length;i++){
+         	String[] forth = third[i].trim().split(" ");
+         	geometryX.add(Double.parseDouble(forth[0]));
+         	geometryY.add(Double.parseDouble(forth[1]));
+         }
+         return geometryType;
+	}
+    
+    static String getGeometry(String geometryString,List<Double> geometryX,List<Double> geometryY,List<Double>geometryZ){
+        String[] first =geometryString.split("\\(");
+        String geometryType = first[0].trim();
+        String[] second = first[1].trim().split("\\)");
+        String[] third = second[0].trim().split(",");
+        for(int i=0;i<third.length;i++){
+        	String[] forth = third[i].trim().split(" ");
+        	geometryX.add(Double.parseDouble(forth[0]));
+        	geometryY.add(Double.parseDouble(forth[1]));
+        	geometryZ.add(Double.parseDouble(forth[2]));
+        }
+        return geometryType;
+	}
+   // to solve multi geometry
+    static String[][][] getGeometry(String geometryString){
+    	
+        String[] zero = geometryString.split("\\(\\(");
+        zero = zero[1].trim().split("\\)\\)");
+        String[] first = zero[0].trim().split("\\),\\(");
+        int geometryNumber = first.length;
+        String[][] second = new String[geometryNumber][];
+        String[][][] third = new String[geometryNumber][][];
+        for(int i=0;i<geometryNumber;i++){
+        	second[i]=first[i].trim().split(",");
+        	int pointNumber = second[i].length;
+        	third[i]=new String[pointNumber][];
+        	for(int j=0;j<pointNumber;j++){
+        		third[i][j] = new String[2];
+        		for(int k=0;k<2;k++){
+            		third[i][j][k] = second[i][j].trim().split(" ")[k];	
+        		}
+        	}
+        }
+        return third;	
+    }   
+}
